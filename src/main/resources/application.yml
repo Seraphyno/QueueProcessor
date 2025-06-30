@@ -1,0 +1,10 @@
+spring:
+  kafka:
+    bootstrap-servers: kafka:9092
+
+org:
+  medium:
+    queue-processor:
+      publish-topic: publish-queue
+      feedback-topic: feedback-queue
+      group-id: org.medium.queue-processor

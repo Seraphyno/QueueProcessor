@@ -25,12 +25,13 @@ public class FeedbackPublisher {
     }
 
     public void sendMessage(String key, QueueMessage message) {
-        CompletableFuture<SendResult<String, QueueMessage>> send = kafkaTemplate.send(produceTopic, key, message);
+        String composedKey = "%s_%s".formatted("reply", key.split("_")[1]);
+        CompletableFuture<SendResult<String, QueueMessage>> send = kafkaTemplate.send(produceTopic, composedKey, message);
         send.whenComplete((result, exception) -> {
             if (exception == null) {
-                LOGGER.info("Response for '{}' sent successfully with offset: '{}'", key, result.getRecordMetadata().offset());
+                LOGGER.info("Response for '{}' sent successfully with offset: '{}'", composedKey, result.getRecordMetadata().offset());
             } else {
-                LOGGER.error("Response for '{}' send failed due to error {}", key, exception.getMessage());
+                LOGGER.error("Response for '{}' send failed due to error {}", composedKey, exception.getMessage());
             }
         });
     }
